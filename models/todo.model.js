@@ -1,4 +1,5 @@
 let todos = require("../todos/todos.json");
+const { writeDataToFile } = require("../utils");
 
 const findAll = () => {
   return new Promise((resolve, reject) => {
@@ -15,22 +16,26 @@ const findById = (id) => {
 
 const create = (todo) => {
   return new Promise((resolve, reject) => {
-    todos.push(todo);
-    resolve(todo);
+    const newTodo = { id: Date.now(), ...todo };
+    todos.push(newTodo);
+    writeDataToFile("./todos/todos.json", todos);
+    resolve(newTodo);
   });
 };
 
 const update = (id, todo) => {
   return new Promise((resolve, reject) => {
     const index = todos.findIndex((t) => t.id == id);
-    todos[index] = { id, ...todos };
+    todos[index] = { id, ...todo };
+    writeDataToFile("./todos/todos.json", todos);
     resolve(todos[index]);
   });
 };
 
-const destroy = (id, todo) => {
+const remove = (id) => {
   return new Promise((resolve, reject) => {
-    todos = todos.filter((t) => t.id !== id);
+    todos = todos.filter((t) => t.id != id);
+    writeDataToFile("./todos/todos.json", todos);
     resolve();
   });
 };
@@ -40,5 +45,5 @@ module.exports = {
   findById,
   create,
   update,
-  destroy,
+  remove,
 };

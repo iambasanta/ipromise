@@ -41,10 +41,9 @@ const addTodo = async (req, res) => {
     });
 
     req.on("end", async () => {
-      const { id, title, completed } = JSON.parse(body);
+      const { title, completed } = JSON.parse(body);
 
       const todo = {
-        id,
         title,
         completed,
       };
@@ -77,15 +76,14 @@ const updateTodo = async (req, res, id) => {
       });
 
       req.on("end", async () => {
-        const { id, title, completed } = JSON.parse(body);
+        const { title, completed } = JSON.parse(body);
 
-        const todo = {
-          id: id || todo.id,
+        const todoData = {
           title: title || todo.title,
           completed: completed || todo.completed,
         };
 
-        const updatedTodo = await Todo.update(id, todo);
+        const updatedTodo = await Todo.update(id, todoData);
 
         res.setHeader("Content-Type", "application/json");
         res.writeHead(200);
@@ -108,7 +106,7 @@ const deleteTodo = async (req, res, id) => {
       res.write(JSON.stringify({ message: "Todo not found!" }));
       res.end();
     } else {
-      await Todo.destroy(id);
+      await Todo.remove(id);
       res.setHeader("Content-Type", "application/json");
       res.writeHead(200);
       res.write(JSON.stringify({ message: "Product deleted successfully!" }));
